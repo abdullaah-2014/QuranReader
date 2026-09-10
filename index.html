@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Quran Reader</title>
 
 <style>
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -17,7 +19,6 @@ body {
     background: #f4f7f5;
     color: #17251d;
     transition: 0.3s;
-    padding-bottom: 100px;
 }
 
 body.dark {
@@ -209,8 +210,13 @@ button.secondary {
 }
 
 .repeat-active {
-    background: #ffd700 !important;
-    color: #075e3b !important;
+    background: #b8860b !important;
+    color: white !important;
+}
+
+.surah-repeat-active {
+    background: #8b4513 !important;
+    color: white !important;
 }
 
 .audio-player {
@@ -247,7 +253,7 @@ button.secondary {
 }
 
 audio {
-    width: 40%;
+    width: 45%;
 }
 
 .loading {
@@ -289,30 +295,43 @@ footer {
         width: 100%;
     }
 
-    .audio-inner button {
-        padding: 9px 10px;
-        font-size: 13px;
-    }
 }
+
 </style>
 </head>
 
 <body>
 
 <header>
+
     <h1>☪ Quran Reader</h1>
-    <p>Read • Listen • Reflect</p>
+
+    <p>
+        Read • Listen • Reflect
+    </p>
+
 </header>
+
 
 <div class="container">
 
+
+    <!-- CONTROLS -->
+
     <div class="controls">
+
 
         <div class="row">
 
+
             <select id="surahSelect">
-                <option value="">Loading Surahs...</option>
+
+                <option value="">
+                    Loading Surahs...
+                </option>
+
             </select>
+
 
             <select id="reciterSelect">
 
@@ -338,9 +357,12 @@ footer {
 
             </select>
 
+
         </div>
 
+
         <div class="row">
+
 
             <input
                 type="text"
@@ -348,31 +370,57 @@ footer {
                 placeholder="🔎 Search Arabic, translation, or ayah..."
             >
 
+
             <button onclick="searchAyahs()">
                 Search
             </button>
 
+
             <button
                 class="secondary"
-                onclick="showBookmarks()">
+                onclick="showBookmarks()"
+            >
                 🔖 Bookmarks
             </button>
 
+
             <button
                 class="secondary"
-                onclick="toggleDarkMode()">
+                onclick="toggleDarkMode()"
+            >
                 🌙 Dark Mode
             </button>
 
+
             <button
                 class="secondary"
-                onclick="loadSurah(currentSurah)">
+                onclick="resetReader()"
+            >
                 ↻ Reset
             </button>
 
+
         </div>
 
+
+        <!-- SURAH REPEAT BUTTON -->
+
+        <div class="row">
+
+
+            <button
+                id="surahRepeatButton"
+                onclick="toggleSurahRepeat()"
+            >
+                🔁 Repeat Surah
+            </button>
+
+
+        </div>
+
+
     </div>
+
 
     <div id="content">
 
@@ -382,7 +430,9 @@ footer {
 
     </div>
 
+
 </div>
+
 
 <footer>
 
@@ -396,11 +446,13 @@ footer {
 
 </footer>
 
+
 <!-- AUDIO PLAYER -->
 
 <div class="audio-player">
 
     <div class="audio-inner">
+
 
         <div class="audio-info">
 
@@ -414,38 +466,42 @@ footer {
 
         </div>
 
+
         <button onclick="previousAyah()">
             ⏮
         </button>
 
+
         <button
             onclick="toggleAudio()"
-            id="playButton">
+            id="playButton"
+        >
             ▶
         </button>
+
 
         <button onclick="nextAyah()">
             ⏭
         </button>
 
-        <button
-            onclick="toggleRepeat()"
-            id="repeatButton">
-            🔁 Repeat Off
-        </button>
 
         <audio
             id="audio"
-            controls>
-        </audio>
+            controls
+        ></audio>
+
 
     </div>
 
 </div>
 
+
 <script>
 
-const API = "https://api.alquran.cloud/v1";
+
+const API =
+    "https://api.alquran.cloud/v1";
+
 
 let currentSurah = 1;
 
@@ -455,20 +511,32 @@ let ayahs = [];
 
 let bookmarks =
     JSON.parse(
-        localStorage.getItem("quranBookmarks") || "[]"
+        localStorage.getItem(
+            "quranBookmarks"
+        ) || "[]"
     );
 
-let searchMode = false;
 
-/* =========================
-   REPEAT SETTINGS
-========================= */
+/*
+====================================
+REPEAT SETTINGS
+====================================
+*/
+
 
 let repeatAyah = false;
 
-/* =========================
-   RECITERS
-========================= */
+let repeatIndex = null;
+
+let repeatSurah = false;
+
+
+/*
+====================================
+RECITERS
+====================================
+*/
+
 
 const reciters = {
 
@@ -489,16 +557,22 @@ const reciters = {
 
 };
 
-/* =========================
-   LOAD SURAH LIST
-========================= */
+
+/*
+====================================
+LOAD SURAH LIST
+====================================
+*/
+
 
 async function loadSurahList() {
 
     try {
 
         const response =
-            await fetch(API + "/surah");
+            await fetch(
+                API + "/surah"
+            );
 
         const data =
             await response.json();
@@ -510,47 +584,68 @@ async function loadSurahList() {
 
         select.innerHTML = "";
 
-        data.data.forEach(surah => {
 
-            const option =
-                document.createElement("option");
+        data.data.forEach(
+            surah => {
 
-            option.value =
-                surah.number;
+                const option =
+                    document.createElement(
+                        "option"
+                    );
 
-            option.textContent =
-                surah.number +
-                ". " +
-                surah.englishName +
-                " — " +
-                surah.name;
+                option.value =
+                    surah.number;
 
-            select.appendChild(option);
+                option.textContent =
+                    surah.number +
+                    ". " +
+                    surah.englishName +
+                    " — " +
+                    surah.name;
 
-        });
+                select.appendChild(
+                    option
+                );
+
+            }
+        );
+
 
         select.value =
             currentSurah;
+
 
         select.addEventListener(
             "change",
             function() {
 
                 currentSurah =
-                    parseInt(this.value);
+                    parseInt(
+                        this.value
+                    );
 
-                loadSurah(currentSurah);
+                stopAllRepeat();
+
+                loadSurah(
+                    currentSurah
+                );
 
             }
         );
 
-        loadSurah(currentSurah);
 
-    } catch(error) {
+        loadSurah(
+            currentSurah
+        );
+
+    }
+
+    catch(error) {
 
         document.getElementById(
             "content"
         ).innerHTML =
+
             "<div class='no-results'>" +
             "Unable to load Quran data. " +
             "Please check your internet connection." +
@@ -560,37 +655,50 @@ async function loadSurahList() {
 
 }
 
-/* =========================
-   LOAD SURAH
-========================= */
+
+/*
+====================================
+LOAD SURAH
+====================================
+*/
+
 
 async function loadSurah(number) {
 
-    searchMode = false;
+    stopAllRepeat();
 
     document.getElementById(
         "content"
     ).innerHTML =
-        "<div class='loading'>📖 Loading Surah...</div>";
+
+        "<div class='loading'>" +
+        "📖 Loading Surah..." +
+        "</div>";
+
 
     try {
 
         const response =
             await fetch(
+
                 API +
                 "/surah/" +
                 number +
                 "/editions/quran-uthmani,en.sahih"
+
             );
+
 
         const data =
             await response.json();
+
 
         const arabic =
             data.data[0];
 
         const translation =
             data.data[1];
+
 
         ayahs =
             arabic.ayahs.map(
@@ -613,18 +721,23 @@ async function loadSurah(number) {
                 })
             );
 
+
         currentAyah = 0;
+
 
         renderSurah(
             arabic,
             ayahs
         );
 
-    } catch(error) {
+    }
+
+    catch(error) {
 
         document.getElementById(
             "content"
         ).innerHTML =
+
             "<div class='no-results'>" +
             "Could not load this Surah." +
             "</div>";
@@ -633,13 +746,21 @@ async function loadSurah(number) {
 
 }
 
-/* =========================
-   DISPLAY SURAH
-========================= */
 
-function renderSurah(surah, list) {
+/*
+====================================
+RENDER SURAH
+====================================
+*/
+
+
+function renderSurah(
+    surah,
+    list
+) {
 
     let html = "";
+
 
     html += `
 
@@ -654,14 +775,18 @@ function renderSurah(surah, list) {
             </p>
 
             <p>
-                ${surah.numberOfAyahs} Ayahs
+                ${surah.numberOfAyahs}
+                Ayahs
             </p>
 
         </div>
 
     `;
 
-    if (surah.number !== 9) {
+
+    if (
+        surah.number !== 9
+    ) {
 
         html += `
 
@@ -675,6 +800,7 @@ function renderSurah(surah, list) {
 
     }
 
+
     list.forEach(
         (ayah, index) => {
 
@@ -687,17 +813,26 @@ function renderSurah(surah, list) {
         }
     );
 
+
     document.getElementById(
         "content"
-    ).innerHTML = html;
+    ).innerHTML =
+        html;
+
 
     updateBookmarkButtons();
 
+    updateRepeatButtons();
+
 }
 
-/* =========================
-   CREATE AYAH
-========================= */
+
+/*
+====================================
+CREATE AYAH
+====================================
+*/
+
 
 function createAyahHTML(
     ayah,
@@ -709,71 +844,72 @@ function createAyahHTML(
             `${currentSurah}:${ayah.number}`
         );
 
+
     return `
 
         <div
             class="ayah"
-            id="ayah-${index}">
+            id="ayah-${index}"
+        >
+
 
             <div class="ayah-number">
-
                 ${ayah.number}
-
             </div>
+
 
             <div class="arabic">
-
                 ${ayah.arabic}
-
             </div>
+
 
             <div class="translation">
-
                 ${ayah.translation}
-
             </div>
+
 
             <div class="ayah-actions">
 
+
                 <button
-                    onclick="playAyah(${index})">
-
+                    onclick="playAyah(${index})"
+                >
                     🔊 Listen
-
                 </button>
 
-                <button
-                    class="secondary ${
-                        saved ? "bookmarked" : ""
-                    }"
-                    id="bookmark-${index}"
-                    onclick="toggleBookmark(${index})">
 
+                <button
+                    class="secondary ${saved ? "bookmarked" : ""}"
+                    id="bookmark-${index}"
+                    onclick="toggleBookmark(${index})"
+                >
                     ${
                         saved
                         ? "★ Bookmarked"
                         : "☆ Bookmark"
                     }
-
                 </button>
+
 
                 <button
                     class="secondary"
-                    onclick="copyAyah(${index})">
+                    id="repeat-${index}"
+                    onclick="toggleRepeat(${index})"
+                >
+                    🔁 Repeat
+                </button>
 
+
+                <button
+                    class="secondary"
+                    onclick="copyAyah(${index})"
+                >
                     📋 Copy
-
                 </button>
 
-                <button
-                    class="secondary"
-                    onclick="playAyahAndRepeat(${index})">
-
-                    🔂 Repeat This Ayah
-
-                </button>
 
             </div>
+
 
         </div>
 
@@ -781,45 +917,84 @@ function createAyahHTML(
 
 }
 
-/* =========================
-   PLAY AYAH
-========================= */
 
-function playAyah(index) {
+/*
+====================================
+PLAY AYAH
+====================================
+*/
 
-    if (!ayahs[index])
+
+function playAyah(
+    index
+) {
+
+    if (
+        !ayahs[index]
+    )
         return;
 
-    currentAyah = index;
+
+    currentAyah =
+        index;
+
 
     const ayah =
         ayahs[index];
+
 
     const reciter =
         document.getElementById(
             "reciterSelect"
         ).value;
 
+
+    /*
+    Do not automatically stop repeat
+    when the repeat system itself calls
+    playAyah().
+    */
+
+
+    if (
+        repeatIndex !== index &&
+        !repeatSurah
+    ) {
+
+        repeatAyah = false;
+
+        repeatIndex = null;
+
+        updateRepeatButtons();
+
+    }
+
+
     const audioURL =
         `https://cdn.islamic.network/quran/audio/128/${reciter}/${ayah.globalNumber}.mp3`;
+
 
     const audio =
         document.getElementById(
             "audio"
         );
 
+
     audio.src =
         audioURL;
+
 
     document.getElementById(
         "nowPlaying"
     ).textContent =
         `Ayah ${ayah.number}`;
 
+
     document.getElementById(
         "reciterName"
     ).textContent =
         reciters[reciter];
+
 
     document
         .querySelectorAll(".ayah")
@@ -830,10 +1005,12 @@ function playAyah(index) {
                 )
         );
 
+
     const element =
         document.getElementById(
             `ayah-${index}`
         );
+
 
     if (element) {
 
@@ -841,85 +1018,350 @@ function playAyah(index) {
             "playing"
         );
 
+
         element.scrollIntoView({
+
             behavior: "smooth",
+
             block: "center"
+
         });
 
     }
 
+
     audio.play()
-        .catch(() => {});
+        .catch(
+            () => {}
+        );
+
 
     document.getElementById(
         "playButton"
-    ).textContent = "⏸";
+    ).textContent =
+        "⏸";
 
 }
 
-/* =========================
-   PLAY AYAH + REPEAT
-========================= */
 
-function playAyahAndRepeat(index) {
+/*
+====================================
+REPEAT INDIVIDUAL AYAH
+====================================
+*/
 
-    repeatAyah = true;
 
-    updateRepeatButton();
+function toggleRepeat(
+    index
+) {
 
-    playAyah(index);
 
-}
+    /*
+    Stop Surah repeat first.
+    */
 
-/* =========================
-   TOGGLE REPEAT
-========================= */
+    if (
+        repeatSurah
+    ) {
 
-function toggleRepeat() {
+        repeatSurah =
+            false;
+
+        updateSurahRepeatButton();
+
+    }
+
+
+    /*
+    If already repeating,
+    stop it.
+    */
+
+    if (
+        repeatAyah &&
+        repeatIndex === index
+    ) {
+
+        stopRepeat();
+
+        return;
+
+    }
+
+
+    /*
+    Start repeat.
+    */
 
     repeatAyah =
-        !repeatAyah;
+        true;
 
-    updateRepeatButton();
+    repeatIndex =
+        index;
+
+
+    currentAyah =
+        index;
+
+
+    playAyah(
+        index
+    );
+
+
+    repeatAyah =
+        true;
+
+    repeatIndex =
+        index;
+
+
+    updateRepeatButtons();
 
 }
 
-/* =========================
-   UPDATE REPEAT BUTTON
-========================= */
 
-function updateRepeatButton() {
+/*
+====================================
+STOP INDIVIDUAL REPEAT
+====================================
+*/
+
+
+function stopRepeat() {
+
+    repeatAyah =
+        false;
+
+    repeatIndex =
+        null;
+
+
+    updateRepeatButtons();
+
+}
+
+
+/*
+====================================
+REPEAT WHOLE SURAH
+====================================
+*/
+
+
+function toggleSurahRepeat() {
+
+
+    /*
+    If already active,
+    stop it.
+    */
+
+    if (
+        repeatSurah
+    ) {
+
+        stopSurahRepeat();
+
+        return;
+
+    }
+
+
+    /*
+    Stop individual ayah repeat.
+    */
+
+    repeatAyah =
+        false;
+
+    repeatIndex =
+        null;
+
+
+    /*
+    Start Surah repeat.
+    */
+
+    repeatSurah =
+        true;
+
+
+    updateRepeatButtons();
+
+    updateSurahRepeatButton();
+
+
+    /*
+    Start from Ayah 1.
+    */
+
+    playAyah(
+        0
+    );
+
+
+    repeatSurah =
+        true;
+
+
+    updateSurahRepeatButton();
+
+}
+
+
+/*
+====================================
+STOP SURAH REPEAT
+====================================
+*/
+
+
+function stopSurahRepeat() {
+
+    repeatSurah =
+        false;
+
+
+    updateSurahRepeatButton();
+
+}
+
+
+/*
+====================================
+STOP ALL REPEAT
+====================================
+*/
+
+
+function stopAllRepeat() {
+
+    repeatAyah =
+        false;
+
+    repeatIndex =
+        null;
+
+    repeatSurah =
+        false;
+
+
+    updateRepeatButtons();
+
+    updateSurahRepeatButton();
+
+}
+
+
+/*
+====================================
+SURAH REPEAT BUTTON
+====================================
+*/
+
+
+function updateSurahRepeatButton() {
 
     const button =
         document.getElementById(
-            "repeatButton"
+            "surahRepeatButton"
         );
 
-    if (repeatAyah) {
+
+    if (!button)
+        return;
+
+
+    if (
+        repeatSurah
+    ) {
 
         button.textContent =
-            "🔂 Repeat On";
+            "⏹ Stop Repeat Surah";
 
         button.classList.add(
-            "repeat-active"
+            "surah-repeat-active"
         );
 
-    } else {
+    }
+
+    else {
 
         button.textContent =
-            "🔁 Repeat Off";
+            "🔁 Repeat Surah";
 
         button.classList.remove(
-            "repeat-active"
+            "surah-repeat-active"
         );
 
     }
 
 }
 
-/* =========================
-   AUDIO CONTROLS
-========================= */
+
+/*
+====================================
+UPDATE AYAH REPEAT BUTTONS
+====================================
+*/
+
+
+function updateRepeatButtons() {
+
+    document
+        .querySelectorAll(
+            "[id^='repeat-']"
+        )
+        .forEach(
+            button => {
+
+                const index =
+                    parseInt(
+                        button.id.replace(
+                            "repeat-",
+                            ""
+                        )
+                    );
+
+
+                if (
+                    repeatAyah &&
+                    repeatIndex === index
+                ) {
+
+                    button.textContent =
+                        "⏹ Stop Repeat";
+
+                    button.classList.add(
+                        "repeat-active"
+                    );
+
+                }
+
+                else {
+
+                    button.textContent =
+                        "🔁 Repeat";
+
+                    button.classList.remove(
+                        "repeat-active"
+                    );
+
+                }
+
+            }
+        );
+
+}
+
+
+/*
+====================================
+AUDIO CONTROLS
+====================================
+*/
+
 
 function toggleAudio() {
 
@@ -927,6 +1369,7 @@ function toggleAudio() {
         document.getElementById(
             "audio"
         );
+
 
     if (!audio.src) {
 
@@ -938,31 +1381,47 @@ function toggleAudio() {
 
     }
 
-    if (audio.paused) {
+
+    if (
+        audio.paused
+    ) {
 
         audio.play();
 
+
         document.getElementById(
             "playButton"
-        ).textContent = "⏸";
+        ).textContent =
+            "⏸";
 
-    } else {
+    }
+
+    else {
 
         audio.pause();
 
+
         document.getElementById(
             "playButton"
-        ).textContent = "▶";
+        ).textContent =
+            "▶";
 
     }
 
 }
 
-/* =========================
-   NEXT AYAH
-========================= */
+
+/*
+====================================
+NEXT AYAH
+====================================
+*/
+
 
 function nextAyah() {
+
+    stopAllRepeat();
+
 
     if (
         currentAyah <
@@ -977,13 +1436,22 @@ function nextAyah() {
 
 }
 
-/* =========================
-   PREVIOUS AYAH
-========================= */
+
+/*
+====================================
+PREVIOUS AYAH
+====================================
+*/
+
 
 function previousAyah() {
 
-    if (currentAyah > 0) {
+    stopAllRepeat();
+
+
+    if (
+        currentAyah > 0
+    ) {
 
         playAyah(
             currentAyah - 1
@@ -993,41 +1461,116 @@ function previousAyah() {
 
 }
 
-/* =========================
-   AUTO PLAY / REPEAT
-========================= */
+
+/*
+====================================
+AUDIO FINISHED
+====================================
+*/
+
 
 document
-    .getElementById("audio")
+    .getElementById(
+        "audio"
+    )
     .addEventListener(
         "ended",
         function() {
 
+
             /*
-             * If repeat is ON,
-             * play the SAME ayah again.
-             */
+            OPTION 1:
+            Repeat the same ayah.
+            */
 
-            if (repeatAyah) {
+            if (
+                repeatAyah &&
+                repeatIndex !== null
+            ) {
 
-                const audio =
-                    document.getElementById(
-                        "audio"
-                    );
+                playAyah(
+                    repeatIndex
+                );
 
-                audio.currentTime = 0;
 
-                audio.play()
-                    .catch(() => {});
+                repeatAyah =
+                    true;
+
+                repeatIndex =
+                    currentAyah;
+
+
+                updateRepeatButtons();
+
 
                 return;
 
             }
 
+
             /*
-             * Repeat is OFF,
-             * so continue to next ayah.
-             */
+            OPTION 2:
+            Repeat entire Surah.
+            */
+
+            if (
+                repeatSurah
+            ) {
+
+
+                /*
+                If this was the last ayah,
+                start from Ayah 1.
+                */
+
+                if (
+                    currentAyah >=
+                    ayahs.length - 1
+                ) {
+
+                    playAyah(
+                        0
+                    );
+
+
+                    repeatSurah =
+                        true;
+
+
+                    updateSurahRepeatButton();
+
+
+                    return;
+
+                }
+
+
+                /*
+                Otherwise play
+                the next ayah.
+                */
+
+                playAyah(
+                    currentAyah + 1
+                );
+
+
+                repeatSurah =
+                    true;
+
+
+                updateSurahRepeatButton();
+
+
+                return;
+
+            }
+
+
+            /*
+            NORMAL MODE:
+            Continue to next ayah.
+            */
 
             if (
                 currentAyah <
@@ -1038,58 +1581,39 @@ document
                     currentAyah + 1
                 );
 
-            } else {
+            }
+
+            else {
 
                 document.getElementById(
                     "playButton"
-                ).textContent = "▶";
+                ).textContent =
+                    "▶";
 
             }
 
         }
     );
 
-/* =========================
-   AUDIO PAUSE / PLAY EVENTS
-========================= */
 
-document
-    .getElementById("audio")
-    .addEventListener(
-        "play",
-        function() {
+/*
+====================================
+BOOKMARKS
+====================================
+*/
 
-            document.getElementById(
-                "playButton"
-            ).textContent = "⏸";
 
-        }
-    );
-
-document
-    .getElementById("audio")
-    .addEventListener(
-        "pause",
-        function() {
-
-            document.getElementById(
-                "playButton"
-            ).textContent = "▶";
-
-        }
-    );
-
-/* =========================
-   BOOKMARKS
-========================= */
-
-function toggleBookmark(index) {
+function toggleBookmark(
+    index
+) {
 
     const ayah =
         ayahs[index];
 
+
     const id =
         `${currentSurah}:${ayah.number}`;
+
 
     if (
         bookmarks.includes(id)
@@ -1101,11 +1625,16 @@ function toggleBookmark(index) {
                     item !== id
             );
 
-    } else {
+    }
 
-        bookmarks.push(id);
+    else {
+
+        bookmarks.push(
+            id
+        );
 
     }
+
 
     localStorage.setItem(
         "quranBookmarks",
@@ -1114,13 +1643,18 @@ function toggleBookmark(index) {
         )
     );
 
+
     updateBookmarkButtons();
 
 }
 
-/* =========================
-   UPDATE BOOKMARK BUTTONS
-========================= */
+
+/*
+====================================
+UPDATE BOOKMARK BUTTONS
+====================================
+*/
+
 
 function updateBookmarkButtons() {
 
@@ -1132,11 +1666,14 @@ function updateBookmarkButtons() {
                     `bookmark-${index}`
                 );
 
+
             if (!button)
                 return;
 
+
             const id =
                 `${currentSurah}:${ayah.number}`;
+
 
             if (
                 bookmarks.includes(id)
@@ -1149,7 +1686,9 @@ function updateBookmarkButtons() {
                 button.textContent =
                     "★ Bookmarked";
 
-            } else {
+            }
+
+            else {
 
                 button.classList.remove(
                     "bookmarked"
@@ -1163,13 +1702,23 @@ function updateBookmarkButtons() {
         }
     );
 
+
+    updateRepeatButtons();
+
 }
 
-/* =========================
-   SHOW BOOKMARKS
-========================= */
+
+/*
+====================================
+SHOW BOOKMARKS
+====================================
+*/
+
 
 async function showBookmarks() {
+
+    stopAllRepeat();
+
 
     if (
         bookmarks.length === 0
@@ -1183,12 +1732,15 @@ async function showBookmarks() {
 
     }
 
+
     document.getElementById(
         "content"
     ).innerHTML =
+
         "<div class='loading'>" +
         "Loading bookmarks..." +
         "</div>";
+
 
     let html = `
 
@@ -1207,50 +1759,69 @@ async function showBookmarks() {
 
     `;
 
+
     for (
         const bookmark of bookmarks
     ) {
 
+
         const parts =
             bookmark.split(":");
 
+
         const surahNumber =
-            parseInt(parts[0]);
+            parseInt(
+                parts[0]
+            );
+
 
         const ayahNumber =
-            parseInt(parts[1]);
+            parseInt(
+                parts[1]
+            );
+
 
         try {
 
             const response =
                 await fetch(
+
                     API +
                     "/surah/" +
                     surahNumber +
                     "/editions/quran-uthmani,en.sahih"
+
                 );
+
 
             const data =
                 await response.json();
 
+
             const arabic =
                 data.data[0];
+
 
             const translation =
                 data.data[1];
 
+
             const index =
                 ayahNumber - 1;
+
 
             const ayah =
                 arabic.ayahs[index];
 
+
             const trans =
                 translation.ayahs[index];
+
 
             html += `
 
                 <div class="ayah">
+
 
                     <div class="ayah-number">
 
@@ -1258,11 +1829,13 @@ async function showBookmarks() {
 
                     </div>
 
+
                     <div class="arabic">
 
                         ${ayah.text}
 
                     </div>
+
 
                     <div class="translation">
 
@@ -1270,50 +1843,44 @@ async function showBookmarks() {
 
                     </div>
 
+
                     <div class="ayah-actions">
 
-                        <button
-                            onclick="
-                                currentSurah =
-                                    ${surahNumber};
 
-                                document
-                                    .getElementById(
-                                        'surahSelect'
-                                    )
-                                    .value =
-                                    ${surahNumber};
-
-                                loadSurah(
-                                    ${surahNumber}
-                                );
-                            ">
+                        <button onclick="
+                            currentSurah=${surahNumber};
+                            document.getElementById('surahSelect').value=${surahNumber};
+                            loadSurah(${surahNumber});
+                        ">
 
                             📖 Open Surah
 
                         </button>
 
+
                         <button
                             class="secondary"
-                            onclick="
-                                removeBookmark(
-                                    '${bookmark}'
-                                )
-                            ">
+                            onclick="removeBookmark('${bookmark}')"
+                        >
 
                             🗑 Remove
 
                         </button>
 
+
                     </div>
+
 
                 </div>
 
             `;
 
-        } catch(e) {}
+        }
+
+        catch(e) {}
 
     }
+
 
     document.getElementById(
         "content"
@@ -1322,17 +1889,24 @@ async function showBookmarks() {
 
 }
 
-/* =========================
-   REMOVE BOOKMARK
-========================= */
 
-function removeBookmark(id) {
+/*
+====================================
+REMOVE BOOKMARK
+====================================
+*/
+
+
+function removeBookmark(
+    id
+) {
 
     bookmarks =
         bookmarks.filter(
             item =>
                 item !== id
         );
+
 
     localStorage.setItem(
         "quranBookmarks",
@@ -1341,55 +1915,72 @@ function removeBookmark(id) {
         )
     );
 
+
     showBookmarks();
 
 }
 
-/* =========================
-   COPY AYAH
-========================= */
 
-function copyAyah(index) {
+/*
+====================================
+COPY AYAH
+====================================
+*/
+
+
+function copyAyah(
+    index
+) {
 
     const ayah =
         ayahs[index];
 
+
     const text =
         `${ayah.arabic}\n\n${ayah.translation}\n\n— ${currentSurah}:${ayah.number}`;
 
+
     navigator.clipboard
         .writeText(text)
-        .then(() => {
+        .then(
+            () => {
 
-            alert(
-                "Ayah copied!"
-            );
+                alert(
+                    "Ayah copied!"
+                );
 
-        })
-        .catch(() => {
+            }
+        )
+        .catch(
+            () => {
 
-            alert(
-                "Unable to copy."
-            );
+                alert(
+                    "Unable to copy."
+                );
 
-        });
+            }
+        );
 
 }
 
-/* =========================
-   SEARCH
-========================= */
+
+/*
+====================================
+SEARCH
+====================================
+*/
+
 
 async function searchAyahs() {
 
     const query =
-        document
-            .getElementById(
-                "searchInput"
-            )
-            .value
-            .trim()
-            .toLowerCase();
+        document.getElementById(
+            "searchInput"
+        )
+        .value
+        .trim()
+        .toLowerCase();
+
 
     if (!query) {
 
@@ -1401,12 +1992,18 @@ async function searchAyahs() {
 
     }
 
+
+    stopAllRepeat();
+
+
     document.getElementById(
         "content"
     ).innerHTML =
+
         "<div class='loading'>" +
         "🔎 Searching..." +
         "</div>";
+
 
     try {
 
@@ -1416,8 +2013,10 @@ async function searchAyahs() {
                 "/quran/en.sahih"
             );
 
+
         const data =
             await response.json();
+
 
         const results =
             data.data.ayahs.filter(
@@ -1427,26 +2026,26 @@ async function searchAyahs() {
                         .includes(query)
             );
 
+
         if (
             results.length === 0
         ) {
 
             document.getElementById(
                 "content"
-            ).innerHTML = `
+            ).innerHTML =
 
-                <div class="no-results">
+                `<div class="no-results">
 
                     No results found for
                     "<strong>${query}</strong>"
 
-                </div>
-
-            `;
+                </div>`;
 
             return;
 
         }
+
 
         let html = `
 
@@ -1465,6 +2064,7 @@ async function searchAyahs() {
 
         `;
 
+
         results
             .slice(0, 100)
             .forEach(
@@ -1474,11 +2074,13 @@ async function searchAyahs() {
 
                         <div class="ayah">
 
+
                             <div class="ayah-number">
 
                                 ${ayah.number}
 
                             </div>
+
 
                             <div class="translation">
 
@@ -1486,20 +2088,21 @@ async function searchAyahs() {
 
                             </div>
 
+
                             <div class="ayah-actions">
 
-                                <button
-                                    onclick="
-                                        goToGlobalAyah(
-                                            ${ayah.number}
-                                        );
-                                    ">
+
+                                <button onclick="
+                                    goToGlobalAyah(${ayah.number});
+                                ">
 
                                     📖 Open
 
                                 </button>
 
+
                             </div>
+
 
                         </div>
 
@@ -1508,16 +2111,20 @@ async function searchAyahs() {
                 }
             );
 
+
         document.getElementById(
             "content"
         ).innerHTML =
             html;
 
-    } catch(error) {
+    }
+
+    catch(error) {
 
         document.getElementById(
             "content"
         ).innerHTML =
+
             "<div class='no-results'>" +
             "Search failed." +
             "</div>";
@@ -1526,9 +2133,13 @@ async function searchAyahs() {
 
 }
 
-/* =========================
-   GO TO AYAH
-========================= */
+
+/*
+====================================
+GO TO AYAH
+====================================
+*/
+
 
 async function goToGlobalAyah(
     globalNumber
@@ -1538,35 +2149,45 @@ async function goToGlobalAyah(
 
         const response =
             await fetch(
+
                 API +
                 "/ayah/" +
                 globalNumber +
                 "/quran-uthmani,en.sahih"
+
             );
+
 
         const data =
             await response.json();
 
+
         const arabic =
             data.data[0];
+
 
         const surahNumber =
             arabic.surah.number;
 
+
         currentSurah =
             surahNumber;
+
 
         document.getElementById(
             "surahSelect"
         ).value =
             surahNumber;
 
+
         await loadSurah(
             surahNumber
         );
 
+
         const index =
             arabic.numberInSurah - 1;
+
 
         setTimeout(
             () => {
@@ -1576,11 +2197,17 @@ async function goToGlobalAyah(
                         `ayah-${index}`
                     );
 
+
                 if (element) {
 
                     element.scrollIntoView({
-                        behavior: "smooth",
-                        block: "center"
+
+                        behavior:
+                            "smooth",
+
+                        block:
+                            "center"
+
                     });
 
                 }
@@ -1589,7 +2216,9 @@ async function goToGlobalAyah(
             500
         );
 
-    } catch(error) {
+    }
+
+    catch(error) {
 
         alert(
             "Could not open ayah."
@@ -1599,15 +2228,20 @@ async function goToGlobalAyah(
 
 }
 
-/* =========================
-   DARK MODE
-========================= */
+
+/*
+====================================
+DARK MODE
+====================================
+*/
+
 
 function toggleDarkMode() {
 
     document.body.classList.toggle(
         "dark"
     );
+
 
     localStorage.setItem(
         "darkMode",
@@ -1618,20 +2252,87 @@ function toggleDarkMode() {
 
 }
 
-/* =========================
-   RECITER CHANGE
-========================= */
+
+/*
+====================================
+RESET
+====================================
+*/
+
+
+function resetReader() {
+
+    stopAllRepeat();
+
+    currentAyah = 0;
+
+    const audio =
+        document.getElementById(
+            "audio"
+        );
+
+    audio.pause();
+
+    audio.removeAttribute(
+        "src"
+    );
+
+    audio.load();
+
+
+    document.getElementById(
+        "nowPlaying"
+    ).textContent =
+        "Nothing playing";
+
+
+    document.getElementById(
+        "reciterName"
+    ).textContent =
+        "Select an ayah to listen";
+
+
+    document.getElementById(
+        "playButton"
+    ).textContent =
+        "▶";
+
+
+    loadSurah(
+        currentSurah
+    );
+
+}
+
+
+/*
+====================================
+RECITER CHANGE
+====================================
+*/
+
 
 document
-    .getElementById("reciterSelect")
+    .getElementById(
+        "reciterSelect"
+    )
     .addEventListener(
         "change",
         function() {
 
-            if (
+
+            stopAllRepeat();
+
+
+            const audio =
                 document.getElementById(
                     "audio"
-                ).src
+                );
+
+
+            if (
+                audio.src &&
+                ayahs.length > 0
             ) {
 
                 playAyah(
@@ -1643,12 +2344,18 @@ document
         }
     );
 
-/* =========================
-   ENTER TO SEARCH
-========================= */
+
+/*
+====================================
+ENTER TO SEARCH
+====================================
+*/
+
 
 document
-    .getElementById("searchInput")
+    .getElementById(
+        "searchInput"
+    )
     .addEventListener(
         "keydown",
         function(event) {
@@ -1664,9 +2371,13 @@ document
         }
     );
 
-/* =========================
-   INITIALIZE
-========================= */
+
+/*
+====================================
+INITIALIZE DARK MODE
+====================================
+*/
+
 
 if (
     localStorage.getItem(
@@ -1680,6 +2391,14 @@ if (
 
 }
 
+
+/*
+====================================
+START APPLICATION
+====================================
+*/
+
+
 loadSurahList();
 
 </script>
@@ -1687,8 +2406,3 @@ loadSurahList();
 </body>
 </html>
 
-
-</script>
-
-</body>
-</html>

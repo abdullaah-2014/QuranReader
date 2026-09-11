@@ -7,15 +7,6 @@
 
 <title>Quran Reader</title>
 
-<!-- Arabic Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link
-    href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=Lateef&family=Scheherazade+New:wght@400;700&display=swap"
-    rel="stylesheet"
->
-
 <style>
 
 * {
@@ -143,7 +134,7 @@ button.secondary {
 }
 
 .bismillah {
-    font-family: "Amiri", serif;
+    font-family: "Traditional Arabic", "Amiri", "Times New Roman", serif;
     font-size: 32px;
     text-align: center;
     margin: 20px 0;
@@ -186,13 +177,12 @@ button.secondary {
 }
 
 .arabic {
-    font-family: "Amiri", serif;
+    font-family: "Traditional Arabic", "Amiri", "Times New Roman", serif;
     font-size: 32px;
     line-height: 2.1;
     text-align: right;
     direction: rtl;
     margin-bottom: 15px;
-    transition: font-family 0.2s ease;
 }
 
 .translation {
@@ -307,7 +297,6 @@ footer {
 
     .arabic {
         font-size: 27px;
-        line-height: 2;
     }
 
     .translation {
@@ -347,9 +336,8 @@ footer {
     <div class="controls">
 
 
-        <!-- SURAH / RECITER / FONT -->
-
         <div class="row">
+
 
             <select id="surahSelect">
 
@@ -359,6 +347,8 @@ footer {
 
             </select>
 
+
+            <!-- RECITER SELECTOR -->
 
             <select id="reciterSelect">
 
@@ -445,38 +435,11 @@ footer {
             </select>
 
 
-            <!-- ARABIC FONT SELECTOR -->
-
-            <select id="fontSelect">
-
-                <option value="Amiri">
-                    Arabic Font: Amiri
-                </option>
-
-                <option value="Noto Naskh Arabic">
-                    Arabic Font: Noto Naskh Arabic
-                </option>
-
-                <option value="Noto Kufi Arabic">
-                    Arabic Font: Noto Kufi Arabic
-                </option>
-
-                <option value="Lateef">
-                    Arabic Font: Lateef
-                </option>
-
-                <option value="Scheherazade New">
-                    Arabic Font: Scheherazade New
-                </option>
-
-            </select>
-
         </div>
 
 
-        <!-- SEARCH / OTHER CONTROLS -->
-
         <div class="row">
+
 
             <input
                 type="text"
@@ -513,12 +476,12 @@ footer {
                 ↻ Reset
             </button>
 
+
         </div>
 
 
-        <!-- REPEAT SURAH -->
-
         <div class="row">
+
 
             <button
                 id="surahRepeatButton"
@@ -526,6 +489,7 @@ footer {
             >
                 🔁 Repeat Surah
             </button>
+
 
         </div>
 
@@ -558,11 +522,11 @@ footer {
 </footer>
 
 
-<!-- AUDIO PLAYER -->
-
 <div class="audio-player">
 
+
     <div class="audio-inner">
+
 
         <div class="audio-info">
 
@@ -600,7 +564,9 @@ footer {
             controls
         ></audio>
 
+
     </div>
+
 
 </div>
 
@@ -756,75 +722,6 @@ const reciters = {
     }
 
 };
-
-
-/* =========================================================
-   ARABIC FONT
-   ========================================================= */
-
-const fontSelect =
-    document.getElementById(
-        "fontSelect"
-    );
-
-
-function applyArabicFont(
-    font
-) {
-
-    document
-        .querySelectorAll(".arabic")
-        .forEach(
-            element => {
-
-                element.style.fontFamily =
-                    `"${font}", serif`;
-
-            }
-        );
-
-}
-
-
-/* Load saved font */
-
-const savedFont =
-    localStorage.getItem(
-        "arabicFont"
-    ) || "Amiri";
-
-
-fontSelect.value =
-    savedFont;
-
-
-applyArabicFont(
-    savedFont
-);
-
-
-/* Font change */
-
-fontSelect.addEventListener(
-    "change",
-    function() {
-
-        const font =
-            this.value;
-
-
-        localStorage.setItem(
-            "arabicFont",
-            font
-        );
-
-
-        applyArabicFont(
-            font
-        );
-
-    }
-);
 
 
 /* =========================================================
@@ -1111,15 +1008,6 @@ function renderSurah(
     updateBookmarkButtons();
 
     updateRepeatButtons();
-
-
-    /* Reapply selected Arabic font */
-
-    applyArabicFont(
-        localStorage.getItem(
-            "arabicFont"
-        ) || "Amiri"
-    );
 
 }
 
@@ -1818,7 +1706,8 @@ document
         "ended",
         function() {
 
-            /* Individual repeat */
+
+            /* INDIVIDUAL AYAH REPEAT */
 
             if (
                 repeatAyah &&
@@ -1834,7 +1723,7 @@ document
             }
 
 
-            /* Whole Surah repeat */
+            /* WHOLE SURAH REPEAT */
 
             if (
                 repeatSurah
@@ -1863,7 +1752,7 @@ document
             }
 
 
-            /* Normal playback */
+            /* NORMAL PLAYBACK */
 
             if (
                 currentAyah <
@@ -2171,15 +2060,6 @@ async function showBookmarks() {
         "content"
     ).innerHTML =
         html;
-
-
-    /* Apply selected font to bookmarks */
-
-    applyArabicFont(
-        localStorage.getItem(
-            "arabicFont"
-        ) || "Amiri"
-    );
 
 }
 
@@ -2652,8 +2532,3 @@ loadSurahList();
 
 </body>
 </html>
-
-</body>
-</html>
-
-

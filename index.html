@@ -489,7 +489,30 @@ footer {
             >
                 🔁 Repeat Surah
             </button>
+<input
+    type="number"
+    id="repeatStartInput"
+    placeholder="Start Ayah"
+    min="1"
+>
 
+<input
+    type="number"
+    id="repeatEndInput"
+    placeholder="End Ayah"
+    min="1"
+>
+
+<button onclick="startRangeRepeat()">
+    🔂 Repeat Range
+</button>
+
+<button
+    class="secondary"
+    onclick="stopRangeRepeat()"
+>
+    ⏹ Stop Range
+</button>
 
         </div>
 
@@ -608,11 +631,19 @@ let bookmarks =
    REPEAT SETTINGS
    ========================================================= */
 
+
 let repeatAyah = false;
 
 let repeatIndex = null;
 
 let repeatSurah = false;
+
+let repeatRange = false;
+
+let repeatStart = null;
+
+let repeatEnd = null;
+
 
 
 /* =========================================================
@@ -1473,27 +1504,24 @@ function stopSurahRepeat() {
 /* =========================================================
    STOP ALL REPEAT
    ========================================================= */
-
 function stopAllRepeat() {
 
-    repeatAyah =
-        false;
+    repeatAyah = false;
 
+    repeatIndex = null;
 
-    repeatIndex =
-        null;
+    repeatSurah = false;
 
+    repeatRange = false;
 
-    repeatSurah =
-        false;
+    repeatStart = null;
 
+    repeatEnd = null;
 
     updateRepeatButtons();
 
     updateSurahRepeatButton();
-
 }
-
 
 /* =========================================================
    UPDATE SURAH REPEAT BUTTON
@@ -1653,6 +1681,10 @@ function toggleAudio() {
    NEXT AYAH
    ========================================================= */
 
+
+
+
+
 function nextAyah() {
 
     stopAllRepeat();
@@ -1721,6 +1753,30 @@ document
                 return;
 
             }
+
+
+            /* RANGE REPEAT */
+
+if (repeatRange) {
+
+    if (
+        currentAyah >= repeatEnd
+    ) {
+
+        playAyah(
+            repeatStart
+        );
+
+    } else {
+
+        playAyah(
+            currentAyah + 1
+        );
+
+    }
+
+    return;
+}
 
 
             /* WHOLE SURAH REPEAT */
@@ -2532,4 +2588,3 @@ loadSurahList();
 
 </body>
 </html>
-

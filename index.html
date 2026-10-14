@@ -1484,7 +1484,72 @@ function toggleSurahRepeat() {
     );
 
 }
+/* =========================================================
+   RANGE REPEAT
+   ========================================================= */
 
+function startRangeRepeat() {
+
+    const start =
+        parseInt(
+            document.getElementById(
+                "repeatStartInput"
+            ).value
+        );
+
+    const end =
+        parseInt(
+            document.getElementById(
+                "repeatEndInput"
+            ).value
+        );
+
+    if (
+        isNaN(start) ||
+        isNaN(end)
+    ) {
+        alert(
+            "Enter both start and end ayahs."
+        );
+        return;
+    }
+
+    if (
+        start < 1 ||
+        end > ayahs.length
+    ) {
+        alert(
+            "Ayah numbers are out of range."
+        );
+        return;
+    }
+
+    if (start > end) {
+        alert(
+            "Start ayah must be less than or equal to end ayah."
+        );
+        return;
+    }
+
+    stopAllRepeat();
+
+    repeatRange = true;
+
+    repeatStart = start - 1;
+
+    repeatEnd = end - 1;
+
+    playAyah(repeatStart);
+}
+
+function stopRangeRepeat() {
+
+    repeatRange = false;
+
+    repeatStart = null;
+
+    repeatEnd = null;
+}
 
 /* =========================================================
    STOP SURAH REPEAT
